@@ -18,19 +18,25 @@
         AFRAME.registerComponent('marker', {
             init: function () {
                 const marker = this.el;
-
+                const modelEls = document.querySelectorAll('.model-el');
+                
                 // マーカーを検出したイベントの登録
                 marker.addEventListener('markerFound', () => {
-                    const modelEls = document.querySelectorAll('.model-el');
                     modelEls.forEach(value => {
-                        value.setAttribute('animation', 'enabled: true');
+                        // value.setAttribute('animation', 'enabled: true');
+                        value.emit('found');
                     });
                     // document.getElementById('ushi-el').setAttribute('animation', 'enabled: true');
+                    // document.getElementById('ushi-el').emit('found');
                 });
-
+                
                 // マーカーを見失ったイベントの登録
                 marker.addEventListener('markerLost', () => {
                     console.log('markerLost');
+                    modelEls.forEach(value => {
+                        // value.setAttribute('animation', 'enabled: true');
+                        value.emit('lost');
+                    });
                 });
             }
         });
@@ -77,16 +83,18 @@
                 <a-animation attribute="position" to="0 1 0" direction="alternate" dur="2000" repeat="indefinite">
                 </a-animation>
             </a-sphere> -->
-            <a-entity class="model-el" gltf-model="#ushi" modify-materials position="0 -1 0.7" rotation="-70 0 0"
-                animation="property: position; to: 0 1 0.7; loop: false; dur: 3000; enabled: false;"></a-entity>
+            <a-entity class="model-el" id="ushi-el" gltf-model="#ushi" modify-materials position="0 -1 0.7" rotation="-70 0 0"
+                animation="property: position; to: 0 1 0.7; loop: false; dur: 3000; startEvents: found; pauseEvents: lost"></a-entity>
+            <!-- <a-entity class="model-el" gltf-model="#ushi" modify-materials position="0 -1 0.7" rotation="-70 0 0"
+                animation="property: position; to: 0 1 0.7; loop: false; dur: 3000; enabled: false;"></a-entity> -->
             <a-entity gltf-model="#sun" modify-materials position="0 -1 -3" rotation="-90 0 0"></a-entity>
             <!-- <a-entity gltf-model="#window-r" modify-materials position="-0.9 0 0.7" rotation="0 0 0"></a-entity>
             <a-entity gltf-model="#window-l" modify-materials position="0.9 0 0.7" rotation="0 0 0"></a-entity> -->
             <a-entity class="model-el" gltf-model="#window-r" modify-materials position="0.95 0 0" rotation="0 0 0"
-                animation="property: rotation; to: 0 0 -180; loop: false; dur: 3000; enabled: false;">
+                animation="property: rotation; to: 0 0 -180; loop: false; dur: 3000; startEvents: found; pauseEvents: lost">
             </a-entity>
             <a-entity class="model-el" gltf-model="#window-l" modify-materials position="-0.95 0 0" rotation="0 0 0"
-                animation="property: rotation; to: 0 0 180; loop: false; dur: 3000; enabled: false;"></a-entity>
+                animation="property: rotation; to: 0 0 180; loop: false; dur: 3000; startEvents: found; pauseEvents: lost"></a-entity>
             <!-- <a-entity text="value: Hello World;" id="greeding"></a-entity> -->
             <!-- <a-text id="greeding" value="HAPPY NEW YEAR!" align="center" font="fonts/mplus-msdf.json"
                 position="0 1 -1.5" rotation="-90 0 0" font-image="fonts/mplus-msdf.png" negate="false" width="10"
