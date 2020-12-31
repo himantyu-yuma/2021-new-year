@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2021年賀状</title>
+    <script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
+
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script
+        src="https://unpkg.com/aframe-text-geometry-component@^0.5.0/dist/aframe-text-geometry-component.min.js"></script>
+
+    <script>
+        AFRAME.registerComponent('marker', {
+            init: function () {
+                const marker = this.el;
+                const modelEls = document.querySelectorAll('.model-el');
+
+                // マーカーを検出したイベントの登録
+                marker.addEventListener('markerFound', () => {
+                    modelEls.forEach(value => {
+                        value.emit('found');
+                    });
+                });
+
+                // マーカーを見失ったイベントの登録
+                marker.addEventListener('markerLost', () => {
+                    console.log('markerLost');
+                    modelEls.forEach(value => {
+                        value.emit('lost');
+                    });
+                });
+            }
+        });
+    </script>
+</head>
+
+<body style="margin : 0px; overflow: hidden;">
+    <a-scene vr-mode-ui="enabled: false;" renderer="logarithmicDepthBuffer: true;" embedded
+        arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false; patternRatio: 0.8;">
+        <a-assets>
+            <a-asset-item id="ushi" src="model/ushi.glb">
+            </a-asset-item>
+            <a-asset-item id="sun" src="model/ushi-sun.glb">
+            </a-asset-item>
+            <a-asset-item id="window-r" src="model/ushi-window-right.glb">
+            </a-asset-item>
+            <a-asset-item id="window-l" src="model/ushi-window-left.glb">
+            </a-asset-item>
+            <a-asset-item id="mplus" src="fonts/mplus.typeface.json"></a-asset-item>
+        </a-assets>
+        <a-marker type='pattern' url='./window/pattern-window.patt' marker>
+            <a-entity class="model-el" id="ushi-el" gltf-model="#ushi" modify-materials position="0 -1 0.7"
+                rotation="-70 0 0"
+                animation="property: position; to: 0 1 0.7; loop: false; dur: 3000; startEvents: found; pauseEvents: lost">
+            </a-entity>
+            <a-entity gltf-model="#sun" modify-materials position="0 -1 -3" rotation="-90 0 0"
+                animation="property: rotation; to: -90 360 0; easing: linear; loop: true; dur: 10000;">
+            </a-entity>
+            <a-entity class="model-el" gltf-model="#window-r" modify-materials position="0.95 0 0" rotation="0 0 0"
+                animation="property: rotation; to: 0 0 -180; loop: false; dur: 3000; startEvents: found; pauseEvents: lost">
+            </a-entity>
+            <a-entity class="model-el" gltf-model="#window-l" modify-materials position="-0.95 0 0" rotation="0 0 0"
+                animation="property: rotation; to: 0 0 180; loop: false; dur: 3000; startEvents: found; pauseEvents: lost">
+            </a-entity>
+            <a-entity id="name" text-geometry="value: ; font: #mplus; size: 0.3" material="color: black;"
+                position="-1.8 1 -1.5" rotation="-90 0 0"></a-entity>
+            <a-entity text-geometry="value: 今年もよろしくお願いします; font: #mplus; size: 0.3" material="color: black;"
+                position="-2.7 1 1.5" rotation="-90 0 0"></a-entity>
+
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+    <script>
+        const nameEl = document.getElementById('name');
+        const name = decodeURI(window.location.search.replace('?q=', ''));
+        if (name != '') {
+            const namelen = name.length;
+            nameEl.setAttribute('position', `-${namelen * 0.225} 1 -2.3`)
+            nameEl.setAttribute('text-geometry', `value: ${name}; font: #mplus; size: 0.3;`)
+            console.log(`name: ${name}`);
+        } else {
+            console.log('ない');
+        }
+    </script>
+</body>
+
+</html>
