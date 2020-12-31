@@ -5,39 +5,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-    
+    <!-- <script
+        src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script> -->
+    <script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
+
+    <!-- <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script> -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script
+        src="https://unpkg.com/aframe-text-geometry-component@^0.5.0/dist/aframe-text-geometry-component.min.js"></script>
+
+    <script>
+        AFRAME.registerComponent('marker', {
+            init: function () {
+                const marker = this.el;
+
+                // マーカーを検出したイベントの登録
+                marker.addEventListener('markerFound', () => {
+                    const modelEls = document.querySelectorAll('.model-el');
+                    modelEls.forEach(value => {
+                        value.setAttribute('animation', 'enabled: true');
+                    });
+                    // document.getElementById('ushi-el').setAttribute('animation', 'enabled: true');
+                });
+
+                // マーカーを見失ったイベントの登録
+                marker.addEventListener('markerLost', () => {
+                    console.log('markerLost');
+                });
+            }
+        });
+    </script>
 </head>
 
 <body>
-    <div class="arjs-loader">
+
+    <!-- <div class="arjs-loader">
         <div>Loading, please wait...</div>
-      </div>
-      <a-scene
-        vr-mode-ui="enabled: false;"
-        renderer="logarithmicDepthBuffer: true;"
-        embedded
-        arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
-      >
+    </div> -->
+    <a-scene vr-mode-ui="enabled: false;" renderer="logarithmicDepthBuffer: true;" embedded
+        arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false; patternRatio: 0.8;">
+        <a-assets>
+            <a-asset-item id="ushi" src="model/ushi.glb">
+            </a-asset-item>
+            <a-asset-item id="sun" src="model/ushi-sun.glb">
+            </a-asset-item>
+            <a-asset-item id="window-r" src="model/ushi-window-right.glb">
+            </a-asset-item>
+            <a-asset-item id="window-l" src="model/ushi-window-left.glb">
+            </a-asset-item>
+            <a-asset-item id="mplus" src="fonts/mplus.typeface.json"></a-asset-item>
+        </a-assets>
         <!-- we use cors proxy to avoid cross-origin problems -->
-        <a-nft
+        <!-- <a-nft
           type="nft"
           url="https://arjs-cors-proxy.herokuapp.com/https://himantyu-yuma.github.io/2021-new-year/window/49_057"
           smooth="true"
           smoothCount="10"
           smoothTolerance=".01"
           smoothThreshold="5"
-        >
-          <a-entity
+        > -->
+        <!-- <a-nft
+          type="nft"
+          url="window/49_057"
+          smooth="true"
+          smoothCount="10"
+          smoothTolerance=".01"
+          smoothThreshold="5"
+        > -->
+        <a-marker type='pattern' url='./window/pattern-window.patt' marker>
+            <!-- <a-sphere scale=".25 .25 .25" position="0 .5 0" color="#f00">
+                <a-animation attribute="position" to="0 1 0" direction="alternate" dur="2000" repeat="indefinite">
+                </a-animation>
+            </a-sphere> -->
+            <a-entity class="model-el" gltf-model="#ushi" modify-materials position="0 -1 0.7" rotation="-70 0 0"
+                animation="property: position; to: 0 1 0.7; loop: false; dur: 3000; enabled: false;"></a-entity>
+            <a-entity gltf-model="#sun" modify-materials position="0 -1 -3" rotation="-90 0 0"></a-entity>
+            <!-- <a-entity gltf-model="#window-r" modify-materials position="-0.9 0 0.7" rotation="0 0 0"></a-entity>
+            <a-entity gltf-model="#window-l" modify-materials position="0.9 0 0.7" rotation="0 0 0"></a-entity> -->
+            <a-entity class="model-el" gltf-model="#window-r" modify-materials position="0.95 0 0" rotation="0 0 0"
+                animation="property: rotation; to: 0 0 -180; loop: false; dur: 3000; enabled: false;">
+            </a-entity>
+            <a-entity class="model-el" gltf-model="#window-l" modify-materials position="-0.95 0 0" rotation="0 0 0"
+                animation="property: rotation; to: 0 0 180; loop: false; dur: 3000; enabled: false;"></a-entity>
+            <!-- <a-entity text="value: Hello World;" id="greeding"></a-entity> -->
+            <!-- <a-text id="greeding" value="HAPPY NEW YEAR!" align="center" font="fonts/mplus-msdf.json"
+                position="0 1 -1.5" rotation="-90 0 0" font-image="fonts/mplus-msdf.png" negate="false" width="10"
+                color="black"></a-text> -->
+            <a-entity id="name" text-geometry="value: ; font: #mplus; size: 0.3" material="color: black;"
+                position="-0.9 1 -2" rotation="-90 0 0"></a-entity>
+            <a-entity id="greeding" text-geometry="value: HAPPY NEW YEAR!; font: #mplus; size: 0.3"
+                material="color: black;" position="-1.8 1 -1.5" rotation="-90 0 0"
+                animation="property: components.material.material.color; type:color; from: red; to: purple; dur:5000">
+            </a-entity>
+            <!-- <a-entity text="今年もよろしくお願いします"></a-entity> -->
+            <!-- <a-text value="今年もよろしくお願いします" align="center" font="fonts/mplus-msdf.json" font-image="fonts/mplus-msdf.png"
+                position="0 1 1.5" rotation="-90 0 0" negate="false" animation="" width="10" color="black"></a-text> -->
+            <!-- <a-entity text="value: Hello World;"></a-entity> -->
+            <a-entity text-geometry="value: 今年もよろしくお願いします; font: #mplus; size: 0.3" material="color: black;"
+                position="-2.7 1 1.5" rotation="-90 0 0"></a-entity>
+
+        </a-marker>
+        <!-- <a-entity
             gltf-model="https://arjs-cors-proxy.herokuapp.com/https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/scene.gltf"
-            scale="5 5 5"
-            position="50 150 0"
-          >
-          </a-entity>
-        </a-nft>
+            scale="5 5 5" position="50 150 0">
+        </a-entity> -->
+        <!-- </a-nft> -->
         <a-entity camera></a-entity>
-      </a-scene>
+    </a-scene>
+    <script>
+        // const greeding = document.getElementById('greeding');
+        const nameEl = document.getElementById('name');
+        const name = decodeURI(window.location.search.replace('?q=', ''));
+        if (name != '') {
+            // greeding.setAttribute('text', `value: HAPPY NEW YEAR! ${name};`)
+            // greeding.setAttribute('value', `HAPPY NEW YEAR! ${name}`);
+            const namelen = name.length;
+            nameEl.setAttribute('position', `-${namelen * 0.225} 1 -2.3`)
+            nameEl.setAttribute('text-geometry', `value: ${name}; font: #mplus; size: 0.3;`)
+            console.log(`name: ${name}`);
+        } else {
+            console.log('ない');
+        }
+
+
+
+    </script>
 </body>
 
 </html>
